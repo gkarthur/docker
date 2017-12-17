@@ -1,0 +1,51 @@
+version: '2'
+services:
+        tomcat_inst1:
+                image: agahiedocker/tomcat8-jdk7
+                container_name: tomcat_inst1
+                ports:
+                - "8080:8080"
+                depends_on:
+                - "mysql_inst1"
+                volumes:
+                - tomcat-webapps:/opt/tomcat/webapps
+                - tomcat-confapps:/opt/tomcat/confapps
+                - tomcat-logs:/opt/tomcat/logs
+                environment:
+                - JAVA_OPTS='-Dspring.config.location=/opt/tomcat/confapps/application.properties'
+                - JAVA_OPTS='-Dlogging.config=/opt/tomcat/confapps/logback.xml'
+        
+        mysql_inst1:
+                image: mysql
+                container_name: mysql_inst1
+                ports:
+                - "3306:3306"
+                volumes:
+                - mysql-data-inst1:/var/lib/mysql
+                environment:
+                - MYSQL_ROOT_PASSWORD=pwd2017Gt
+                - MYSQL_DATABASE=appdb
+                - MYSQL_USER=appuser
+                - MYSQL_PASSWORD=pwd2017Gu
+        
+        phpmyadmin:
+                image: phpmyadmin/phpmyadmin
+                container_name: phpmyadmin
+                environment:
+                - MYSQL_ROOT_PASSWORD=pwd2017Gt
+                restart: always
+                ports:
+                - 8081:80
+                volumes:
+                - pma-session:/sessions
+                links:
+                - mysql_inst1:db
+
+volumes:
+        tomcat-webapps:
+        tomcat-confapps:
+        tomcat-logs:
+        mysql-data-inst1:
+        pma-session:
+
+                
